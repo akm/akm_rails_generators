@@ -21,8 +21,8 @@ require 'rails_helper'
 <% module_namespacing do -%>
 RSpec.describe <%= controller_class_name %>Controller, <%= type_metatag(:controller) %> do
 
+  login_user
 <%-
-
   # UPDATE attributes with DB schema
   db_cols = ActiveRecord::Base.connection.select_all("DESC #{table_name}")
   db_cols_hash = db_cols.each_with_object({}){|col, d| d[col['Field']] = col }
@@ -35,7 +35,6 @@ RSpec.describe <%= controller_class_name %>Controller, <%= type_metatag(:control
   required_ref_attrs  = attributes.select{|attr|  attr.reference? && attr.required? }
   required_data_attrs = attributes.select{|attr| !attr.reference? && attr.required? }
 -%>
-
 <%- required_ref_attrs.each do |attr| -%>
   let(:<%= attr.name %>){ FactoryGirl.create(:<%= attr.name %>) }
 <%- end -%>
