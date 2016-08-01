@@ -42,7 +42,7 @@ RSpec.describe <%= controller_class_name %>Controller, <%= type_metatag(:control
   # This should return the minimal set of attributes required to create a valid
   # <%= class_name %>. As you add validations to <%= class_name %>, be sure to
   # adjust the attributes here as well.
-  let(:valid_attributes) {
+  let(:valid_parameters) {
 <%-
  extra_options = required_ref_attrs.map{|attr| "#{attr.name}_id: #{attr.name}.id"}
  extra_options_str = extra_options.blank? ? nil : ".merge(#{extra_options.join(', ')})"
@@ -50,11 +50,11 @@ RSpec.describe <%= controller_class_name %>Controller, <%= type_metatag(:control
     FactoryGirl.attributes_for(:<%= ns_file_name %>)<%= extra_options_str %>
   }
 
-  let(:invalid_attributes) {
+  let(:invalid_parameters) {
 <%- if !required_data_attrs.empty? -%>
-    valid_attributes.merge('<%= required_data_attrs.first.name %>' => '')
+    valid_parameters.merge('<%= required_data_attrs.first.name %>' => '')
 <%- elsif !required_ref_attrs.empty? -%>
-    valid_attributes.merge('<%= required_ref_attrs.first.name %>_id' => '')
+    valid_parameters.merge('<%= required_ref_attrs.first.name %>_id' => '')
 <%- else -%>
     skip("Add a hash of attributes invalid for your model")
 <%- end -%>
@@ -102,30 +102,30 @@ RSpec.describe <%= controller_class_name %>Controller, <%= type_metatag(:control
     context "with valid params" do
       it "creates a new <%= class_name %>" do
         expect {
-          post :create, {:<%= ns_file_name %> => valid_attributes}, valid_session
+          post :create, {:<%= ns_file_name %> => valid_parameters}, valid_session
         }.to change(<%= class_name %>, :count).by(1)
       end
 
       it "assigns a newly created <%= ns_file_name %> as @<%= ns_file_name %>" do
-        post :create, {:<%= ns_file_name %> => valid_attributes}, valid_session
+        post :create, {:<%= ns_file_name %> => valid_parameters}, valid_session
         expect(assigns(:<%= ns_file_name %>)).to be_a(<%= class_name %>)
         expect(assigns(:<%= ns_file_name %>)).to be_persisted
       end
 
       it "redirects to the created <%= ns_file_name %>" do
-        post :create, {:<%= ns_file_name %> => valid_attributes}, valid_session
+        post :create, {:<%= ns_file_name %> => valid_parameters}, valid_session
         expect(response).to redirect_to(<%= class_name %>.last)
       end
     end
 
     context "with invalid params" do
       it "assigns a newly created but unsaved <%= ns_file_name %> as @<%= ns_file_name %>" do
-        post :create, {:<%= ns_file_name %> => invalid_attributes}, valid_session
+        post :create, {:<%= ns_file_name %> => invalid_parameters}, valid_session
         expect(assigns(:<%= ns_file_name %>)).to be_a_new(<%= class_name %>)
       end
 
       it "re-renders the 'new' template" do
-        post :create, {:<%= ns_file_name %> => invalid_attributes}, valid_session
+        post :create, {:<%= ns_file_name %> => invalid_parameters}, valid_session
         expect(response).to render_template("new")
       end
     end
@@ -135,17 +135,17 @@ RSpec.describe <%= controller_class_name %>Controller, <%= type_metatag(:control
     context "with valid params" do
 <%- if !required_data_attrs.empty? -%>
   <%- required_data_attrs.each do |required_data_attr| -%>
-      let(:new_<%= required_data_attr.name %>){ valid_attributes[:<%= required_data_attr.name %>].succ }
+      let(:new_<%= required_data_attr.name %>){ valid_parameters[:<%= required_data_attr.name %>].succ }
   <%- end -%>
 <%- elsif !required_ref_attrs.empty? -%>
       let(:another_<%= required_ref_attrs.last.name %>){ FactoryGirl.create(:<%= required_ref_attrs.last.name %>) }
 <%- end -%>
 
-      let(:new_attributes) {
+      let(:new_parameters) {
 <%- if !required_data_attrs.empty? -%>
-        valid_attributes.merge(<%= required_data_attrs.map{|attr| "#{attr.name}: new_#{attr.name}"}.join(', ') %>)
+        valid_parameters.merge(<%= required_data_attrs.map{|attr| "#{attr.name}: new_#{attr.name}"}.join(', ') %>)
 <%- elsif !required_ref_attrs.empty? -%>
-        valid_attributes.merge(<%= required_ref_attrs.last.name %>_id: another_<%= required_ref_attrs.last.name %>.id)
+        valid_parameters.merge(<%= required_ref_attrs.last.name %>_id: another_<%= required_ref_attrs.last.name %>.id)
 <%- else required_data_attrs.empty? -%>
         skip("Add a hash of attributes valid for your model")
 <%- end -%>
@@ -153,7 +153,7 @@ RSpec.describe <%= controller_class_name %>Controller, <%= type_metatag(:control
 
       it "updates the requested <%= ns_file_name %>" do
         <%= file_name %> = FactoryGirl.create(:<%= ns_file_name %>)
-        put :update, {:id => <%= file_name %>.to_param, :<%= ns_file_name %> => new_attributes}, valid_session
+        put :update, {:id => <%= file_name %>.to_param, :<%= ns_file_name %> => new_parameters}, valid_session
         <%= file_name %>.reload
 <%- if !required_data_attrs.empty? -%>
   <%- required_data_attrs.each do |attr| -%>
@@ -168,13 +168,13 @@ RSpec.describe <%= controller_class_name %>Controller, <%= type_metatag(:control
 
       it "assigns the requested <%= ns_file_name %> as @<%= ns_file_name %>" do
         <%= file_name %> = FactoryGirl.create(:<%= ns_file_name %>)
-        put :update, {:id => <%= file_name %>.to_param, :<%= ns_file_name %> => valid_attributes}, valid_session
+        put :update, {:id => <%= file_name %>.to_param, :<%= ns_file_name %> => valid_parameters}, valid_session
         expect(assigns(:<%= ns_file_name %>)).to eq(<%= file_name %>)
       end
 
       it "redirects to the <%= ns_file_name %>" do
         <%= file_name %> = FactoryGirl.create(:<%= ns_file_name %>)
-        put :update, {:id => <%= file_name %>.to_param, :<%= ns_file_name %> => valid_attributes}, valid_session
+        put :update, {:id => <%= file_name %>.to_param, :<%= ns_file_name %> => valid_parameters}, valid_session
         expect(response).to redirect_to(<%= file_name %>)
       end
     end
@@ -182,13 +182,13 @@ RSpec.describe <%= controller_class_name %>Controller, <%= type_metatag(:control
     context "with invalid params" do
       it "assigns the <%= ns_file_name %> as @<%= ns_file_name %>" do
         <%= file_name %> = FactoryGirl.create(:<%= ns_file_name %>)
-        put :update, {:id => <%= file_name %>.to_param, :<%= ns_file_name %> => invalid_attributes}, valid_session
+        put :update, {:id => <%= file_name %>.to_param, :<%= ns_file_name %> => invalid_parameters}, valid_session
         expect(assigns(:<%= ns_file_name %>)).to eq(<%= file_name %>)
       end
 
       it "re-renders the 'edit' template" do
         <%= file_name %> = FactoryGirl.create(:<%= ns_file_name %>)
-        put :update, {:id => <%= file_name %>.to_param, :<%= ns_file_name %> => invalid_attributes}, valid_session
+        put :update, {:id => <%= file_name %>.to_param, :<%= ns_file_name %> => invalid_parameters}, valid_session
         expect(response).to render_template("edit")
       end
     end
