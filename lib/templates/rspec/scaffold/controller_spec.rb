@@ -59,9 +59,9 @@ RSpec.describe <%= controller_class_name %>Controller, <%= type_metatag(:control
 
   let(:invalid_parameters) {
 <%- if !required_data_attrs.empty? -%>
-    valid_parameters.merge('<%= required_data_attrs.first.name %>' => '')
+    valid_parameters.symbolize_keys.merge(<%= required_data_attrs.first.name %>: '')
 <%- elsif !required_ref_attrs.empty? -%>
-    valid_parameters.merge('<%= required_ref_attrs.first.name %>_id' => '')
+    valid_parameters.symbolize_keys.merge(<%= required_ref_attrs.first.name %>_id: '')
 <%- else -%>
     skip("Add a hash of attributes invalid for your model")
 <%- end -%>
