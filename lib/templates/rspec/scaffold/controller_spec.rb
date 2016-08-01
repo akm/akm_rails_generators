@@ -21,7 +21,6 @@ require 'rails_helper'
 <% module_namespacing do -%>
 RSpec.describe <%= controller_class_name %>Controller, <%= type_metatag(:controller) %> do
 
-  login_user
 <%-
   # UPDATE attributes with DB schema
   db_cols = ActiveRecord::Base.connection.select_all("DESC #{table_name}")
@@ -38,6 +37,10 @@ RSpec.describe <%= controller_class_name %>Controller, <%= type_metatag(:control
 <%- required_ref_attrs.each do |attr| -%>
   let(:<%= attr.name %>){ FactoryGirl.create(:<%= attr.name %>) }
 <%- end -%>
+<%- unless required_ref_attrs.any?{|attr| attr.name == 'user' }-%>
+  let(:user){ FactoryGirl.create(:user) }
+<%- end -%>
+  before{ devise_user_login(user) }
 
 <%-
   unless required_ref_attrs.empty?
@@ -45,6 +48,8 @@ RSpec.describe <%= controller_class_name %>Controller, <%= type_metatag(:control
     extra_attributes_for_factory = ", %s" % required_ref_attrs.map{|attr| "#{attr.name}: #{attr.name}"}.join(', ')
   end
 -%>
+  let(:<%= file_name %>){ FactoryGirl.create(:<%= ns_file_name %><%= extra_attributes_for_factory %>) }
+
   # This should return the minimal set of attributes required to create a valid
   # <%= class_name %>. As you add validations to <%= class_name %>, be sure to
   # adjust the attributes here as well.
@@ -70,7 +75,6 @@ RSpec.describe <%= controller_class_name %>Controller, <%= type_metatag(:control
 <% unless options[:singleton] -%>
   describe "GET #index" do
     it "assigns all <%= table_name.pluralize %> as @<%= table_name.pluralize %>" do
-      <%= file_name %> = FactoryGirl.create(:<%= ns_file_name %><%= extra_attributes_for_factory %>)
       get :index, {}, valid_session
       expect(assigns(:<%= table_name %>)).to eq([<%= file_name %>])
     end
@@ -79,7 +83,7 @@ RSpec.describe <%= controller_class_name %>Controller, <%= type_metatag(:control
 <% end -%>
   describe "GET #show" do
     it "assigns the requested <%= ns_file_name %> as @<%= ns_file_name %>" do
-      <%= file_name %> = FactoryGirl.create(:<%= ns_file_name %><%= extra_attributes_for_factory %>)
+      <%= file_name %> # To create <%= file_name %>
       get :show, {:id => <%= file_name %>.to_param}, valid_session
       expect(assigns(:<%= ns_file_name %>)).to eq(<%= file_name %>)
     end
@@ -94,7 +98,7 @@ RSpec.describe <%= controller_class_name %>Controller, <%= type_metatag(:control
 
   describe "GET #edit" do
     it "assigns the requested <%= ns_file_name %> as @<%= ns_file_name %>" do
-      <%= file_name %> = FactoryGirl.create(:<%= ns_file_name %><%= extra_attributes_for_factory %>)
+      <%= file_name %> # To create <%= file_name %>
       get :edit, {:id => <%= file_name %>.to_param}, valid_session
       expect(assigns(:<%= ns_file_name %>)).to eq(<%= file_name %>)
     end
@@ -154,7 +158,7 @@ RSpec.describe <%= controller_class_name %>Controller, <%= type_metatag(:control
       }
 
       it "updates the requested <%= ns_file_name %>" do
-        <%= file_name %> = FactoryGirl.create(:<%= ns_file_name %><%= extra_attributes_for_factory %>)
+        <%= file_name %> # To create <%= file_name %>
         put :update, {:id => <%= file_name %>.to_param, :<%= ns_file_name %> => new_parameters}, valid_session
         <%= file_name %>.reload
 <%- if !required_data_attrs.empty? -%>
@@ -169,13 +173,13 @@ RSpec.describe <%= controller_class_name %>Controller, <%= type_metatag(:control
       end
 
       it "assigns the requested <%= ns_file_name %> as @<%= ns_file_name %>" do
-        <%= file_name %> = FactoryGirl.create(:<%= ns_file_name %><%= extra_attributes_for_factory %>)
+        <%= file_name %> # To create <%= file_name %>
         put :update, {:id => <%= file_name %>.to_param, :<%= ns_file_name %> => valid_parameters}, valid_session
         expect(assigns(:<%= ns_file_name %>)).to eq(<%= file_name %>)
       end
 
       it "redirects to the <%= ns_file_name %>" do
-        <%= file_name %> = FactoryGirl.create(:<%= ns_file_name %><%= extra_attributes_for_factory %>)
+        <%= file_name %> # To create <%= file_name %>
         put :update, {:id => <%= file_name %>.to_param, :<%= ns_file_name %> => valid_parameters}, valid_session
         expect(response).to redirect_to(<%= file_name %>)
       end
@@ -183,13 +187,13 @@ RSpec.describe <%= controller_class_name %>Controller, <%= type_metatag(:control
 
     context "with invalid params" do
       it "assigns the <%= ns_file_name %> as @<%= ns_file_name %>" do
-        <%= file_name %> = FactoryGirl.create(:<%= ns_file_name %><%= extra_attributes_for_factory %>)
+        <%= file_name %> # To create <%= file_name %>
         put :update, {:id => <%= file_name %>.to_param, :<%= ns_file_name %> => invalid_parameters}, valid_session
         expect(assigns(:<%= ns_file_name %>)).to eq(<%= file_name %>)
       end
 
       it "re-renders the 'edit' template" do
-        <%= file_name %> = FactoryGirl.create(:<%= ns_file_name %><%= extra_attributes_for_factory %>)
+        <%= file_name %> # To create <%= file_name %>
         put :update, {:id => <%= file_name %>.to_param, :<%= ns_file_name %> => invalid_parameters}, valid_session
         expect(response).to render_template("edit")
       end
@@ -198,14 +202,14 @@ RSpec.describe <%= controller_class_name %>Controller, <%= type_metatag(:control
 
   describe "DELETE #destroy" do
     it "destroys the requested <%= ns_file_name %>" do
-      <%= file_name %> = FactoryGirl.create(:<%= ns_file_name %><%= extra_attributes_for_factory %>)
+      <%= file_name %> # To create <%= file_name %>
       expect {
         delete :destroy, {:id => <%= file_name %>.to_param}, valid_session
       }.to change(<%= class_name %>, :count).by(-1)
     end
 
     it "redirects to the <%= table_name %> list" do
-      <%= file_name %> = FactoryGirl.create(:<%= ns_file_name %><%= extra_attributes_for_factory %>)
+      <%= file_name %> # To create <%= file_name %>
       delete :destroy, {:id => <%= file_name %>.to_param}, valid_session
       expect(response).to redirect_to(<%= index_helper %>_url)
     end
