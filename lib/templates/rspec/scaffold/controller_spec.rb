@@ -75,7 +75,7 @@ RSpec.describe <%= controller_class_name %>Controller, <%= type_metatag(:control
 <% unless options[:singleton] -%>
   describe "GET #index" do
     it "assigns all <%= table_name.pluralize %> as @<%= table_name.pluralize %>" do
-      get :index, {}, valid_session
+      get :index, params: {}, session: valid_session
       expect(assigns(:<%= table_name %>)).to eq([<%= file_name %>])
     end
   end
@@ -84,14 +84,14 @@ RSpec.describe <%= controller_class_name %>Controller, <%= type_metatag(:control
   describe "GET #show" do
     it "assigns the requested <%= ns_file_name %> as @<%= ns_file_name %>" do
       <%= file_name %> # To create <%= file_name %>
-      get :show, {:id => <%= file_name %>.to_param}, valid_session
+      get :show, params: {:id => <%= file_name %>.to_param}, session: valid_session
       expect(assigns(:<%= ns_file_name %>)).to eq(<%= file_name %>)
     end
   end
 
   describe "GET #new" do
     it "assigns a new <%= ns_file_name %> as @<%= ns_file_name %>" do
-      get :new, {}, valid_session
+      get :new, params: {}, session: valid_session
       expect(assigns(:<%= ns_file_name %>)).to be_a_new(<%= class_name %>)
     end
   end
@@ -99,7 +99,7 @@ RSpec.describe <%= controller_class_name %>Controller, <%= type_metatag(:control
   describe "GET #edit" do
     it "assigns the requested <%= ns_file_name %> as @<%= ns_file_name %>" do
       <%= file_name %> # To create <%= file_name %>
-      get :edit, {:id => <%= file_name %>.to_param}, valid_session
+      get :edit, params: {:id => <%= file_name %>.to_param}, session: valid_session
       expect(assigns(:<%= ns_file_name %>)).to eq(<%= file_name %>)
     end
   end
@@ -108,30 +108,30 @@ RSpec.describe <%= controller_class_name %>Controller, <%= type_metatag(:control
     context "with valid params" do
       it "creates a new <%= class_name %>" do
         expect {
-          post :create, {:<%= ns_file_name %> => valid_parameters}, valid_session
+          post :create, params: {:<%= ns_file_name %> => valid_parameters}, session: valid_session
         }.to change(<%= class_name %>, :count).by(1)
       end
 
       it "assigns a newly created <%= ns_file_name %> as @<%= ns_file_name %>" do
-        post :create, {:<%= ns_file_name %> => valid_parameters}, valid_session
+        post :create, params: {:<%= ns_file_name %> => valid_parameters}, session: valid_session
         expect(assigns(:<%= ns_file_name %>)).to be_a(<%= class_name %>)
         expect(assigns(:<%= ns_file_name %>)).to be_persisted
       end
 
       it "redirects to the created <%= ns_file_name %>" do
-        post :create, {:<%= ns_file_name %> => valid_parameters}, valid_session
+        post :create, params: {:<%= ns_file_name %> => valid_parameters}, session: valid_session
         expect(response).to redirect_to(<%= class_name %>.last)
       end
     end
 
     context "with invalid params" do
       it "assigns a newly created but unsaved <%= ns_file_name %> as @<%= ns_file_name %>" do
-        post :create, {:<%= ns_file_name %> => invalid_parameters}, valid_session
+        post :create, params: {:<%= ns_file_name %> => invalid_parameters}, session: valid_session
         expect(assigns(:<%= ns_file_name %>)).to be_a_new(<%= class_name %>)
       end
 
       it "re-renders the 'new' template" do
-        post :create, {:<%= ns_file_name %> => invalid_parameters}, valid_session
+        post :create, params: {:<%= ns_file_name %> => invalid_parameters}, session: valid_session
         expect(response).to render_template("new")
       end
     end
@@ -159,7 +159,7 @@ RSpec.describe <%= controller_class_name %>Controller, <%= type_metatag(:control
 
       it "updates the requested <%= ns_file_name %>" do
         <%= file_name %> # To create <%= file_name %>
-        put :update, {:id => <%= file_name %>.to_param, :<%= ns_file_name %> => new_parameters}, valid_session
+        put :update, params: {:id => <%= file_name %>.to_param, :<%= ns_file_name %> => new_parameters}, session: valid_session
         <%= file_name %>.reload
 <%- if !required_data_attrs.empty? -%>
   <%- required_data_attrs.each do |attr| -%>
@@ -174,13 +174,13 @@ RSpec.describe <%= controller_class_name %>Controller, <%= type_metatag(:control
 
       it "assigns the requested <%= ns_file_name %> as @<%= ns_file_name %>" do
         <%= file_name %> # To create <%= file_name %>
-        put :update, {:id => <%= file_name %>.to_param, :<%= ns_file_name %> => valid_parameters}, valid_session
+        put :update, params: {:id => <%= file_name %>.to_param, :<%= ns_file_name %> => valid_parameters}, session: valid_session
         expect(assigns(:<%= ns_file_name %>)).to eq(<%= file_name %>)
       end
 
       it "redirects to the <%= ns_file_name %>" do
         <%= file_name %> # To create <%= file_name %>
-        put :update, {:id => <%= file_name %>.to_param, :<%= ns_file_name %> => valid_parameters}, valid_session
+        put :update, params: {:id => <%= file_name %>.to_param, :<%= ns_file_name %> => valid_parameters}, session: valid_session
         expect(response).to redirect_to(<%= file_name %>)
       end
     end
@@ -188,13 +188,13 @@ RSpec.describe <%= controller_class_name %>Controller, <%= type_metatag(:control
     context "with invalid params" do
       it "assigns the <%= ns_file_name %> as @<%= ns_file_name %>" do
         <%= file_name %> # To create <%= file_name %>
-        put :update, {:id => <%= file_name %>.to_param, :<%= ns_file_name %> => invalid_parameters}, valid_session
+        put :update, params: {:id => <%= file_name %>.to_param, :<%= ns_file_name %> => invalid_parameters}, session: valid_session
         expect(assigns(:<%= ns_file_name %>)).to eq(<%= file_name %>)
       end
 
       it "re-renders the 'edit' template" do
         <%= file_name %> # To create <%= file_name %>
-        put :update, {:id => <%= file_name %>.to_param, :<%= ns_file_name %> => invalid_parameters}, valid_session
+        put :update, params: {:id => <%= file_name %>.to_param, :<%= ns_file_name %> => invalid_parameters}, session: valid_session
         expect(response).to render_template("edit")
       end
     end
@@ -204,13 +204,13 @@ RSpec.describe <%= controller_class_name %>Controller, <%= type_metatag(:control
     it "destroys the requested <%= ns_file_name %>" do
       <%= file_name %> # To create <%= file_name %>
       expect {
-        delete :destroy, {:id => <%= file_name %>.to_param}, valid_session
+        delete :destroy, params: {:id => <%= file_name %>.to_param}, session: valid_session
       }.to change(<%= class_name %>, :count).by(-1)
     end
 
     it "redirects to the <%= table_name %> list" do
       <%= file_name %> # To create <%= file_name %>
-      delete :destroy, {:id => <%= file_name %>.to_param}, valid_session
+      delete :destroy, params: {:id => <%= file_name %>.to_param}, session: valid_session
       expect(response).to redirect_to(<%= index_helper %>_url)
     end
   end
