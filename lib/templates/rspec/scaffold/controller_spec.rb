@@ -1,7 +1,7 @@
 <%-
   # ns_file_name incldues namespace.
   # file_name doesn't include namespace.
-  file_name = ns_parts.blank? ? file_name : ns_parts.last.singularize.underscore
+  file_name = ns_parts.blank? ? file_name || name : ns_parts.last.singularize.underscore
 -%>
 require 'rails_helper'
 
